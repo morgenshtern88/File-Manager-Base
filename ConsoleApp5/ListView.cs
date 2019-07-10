@@ -10,7 +10,7 @@ namespace ConsoleApp5
     class ListView
     {
         ConsoleGraphics graphics = new ConsoleGraphics();
-        public string Current;
+        public List<string> Current = new List<string>();
         int previousSelectedIndex;
         public int selectedIndex;
         private bool wasPainted;
@@ -63,7 +63,7 @@ namespace ConsoleApp5
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
                 item.Render(columnWidth, i, x, y);
-                borders.Borders(columnWidth, i, x, y,graphics);
+               // borders.Borders(columnWidth, i, x, y,graphics);
                 Console.ForegroundColor = savedForeGround;
                 Console.BackgroundColor = savevBackground;
             }

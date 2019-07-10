@@ -16,7 +16,7 @@ namespace ConsoleApp5
             ListView[] view = new ListView[2];
             for (int i = 0; i < view.Length; i++)
             {
-                view[i] = new ListView(3+i * 40, 2, height: 20);
+                view[i] = new ListView(3 + i * 40, 5, height: 20);
                 view[i].columnWidth = new List<int> { 15, 10, 10 };
                 view[i].Items = GetItems("C:\\");
                 view[i].Selected += View_Selected;
@@ -46,7 +46,6 @@ namespace ConsoleApp5
 
         private static void View_Selected(object sender, EventArgs e)
         {
-            int n = 0;
             var view = (ListView)sender;
             var info = view.SelectedItem.state;
             if (info is FileInfo file)
@@ -57,19 +56,23 @@ namespace ConsoleApp5
             {
                 view.Clean();
                 view.Items = GetItems(dir.FullName);
-                view.Current = dir.FullName;
+                view.Current.Add(dir.FullName);
+
             }
-            n++;
+
         }
 
         private static void View_Previous(object sender, EventArgs e)
         {
+            string lastElement = "";
             var view = (ListView)sender;
             view.Clean();
-            
-
-            view.Items = GetItems(Path.GetDirectoryName(view.Current));
-            
+            for (int i = 0; i < view.Current.Count; i++)
+            {
+                view.Items = GetItems(Path.GetDirectoryName(view.Current[view.Current.Count - 1]));
+                lastElement = view.Current[view.Current.Count - 1];
+            }
+            view.Current.Remove(lastElement);
         }
 
 
