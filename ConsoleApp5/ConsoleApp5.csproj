@@ -46,7 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BorderListView.cs" />
+    <Compile Include="ChangeFile.cs" />
+    <Compile Include="FileSystem.cs" />
     <Compile Include="ListNewItems.cs" />
     <Compile Include="ListView.cs" />
     <Compile Include="Program.cs" />

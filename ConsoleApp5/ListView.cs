@@ -15,7 +15,6 @@ namespace ConsoleApp5
         public int selectedIndex;
         private bool wasPainted;
         private int scroll;
-        public object selectedItem { get; set; }
         public bool Focuse { get; set; }
         private int x, y, height;
 
@@ -27,7 +26,6 @@ namespace ConsoleApp5
         }
         public List<int> columnWidth { get; set; }
         public List<ListNewItems> Items { get; set; }
-        public BorderListView borders = new  BorderListView();
         public void Clean()
         {
             selectedIndex = previousSelectedIndex = 0;
@@ -63,7 +61,6 @@ namespace ConsoleApp5
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
                 item.Render(columnWidth, i, x, y);
-               // borders.Borders(columnWidth, i, x, y,graphics);
                 Console.ForegroundColor = savedForeGround;
                 Console.BackgroundColor = savevBackground;
             }
@@ -101,11 +98,25 @@ namespace ConsoleApp5
             {
                 Previous(this, EventArgs.Empty);
             }
-          
+            else if (key.Key == ConsoleKey.F1)
+            {
+                Copy(this, EventArgs.Empty);
+            }
+            else if (key.Key == ConsoleKey.F2)
+            {
+                Cut(this, EventArgs.Empty);
+            }
+            else if(key.Key == ConsoleKey.F3)
+            {
+                Paste(this, EventArgs.Empty);
+            }
         }
 
 
         public event EventHandler Selected;
         public event EventHandler Previous;
+        public event EventHandler Copy;
+        public event EventHandler Cut;
+        public event EventHandler Paste;
     }
 }
