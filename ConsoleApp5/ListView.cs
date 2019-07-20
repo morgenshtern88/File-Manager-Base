@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NConsoleGraphics;
 
 namespace ConsoleApp5
 {
     class ListView
     {
-        ConsoleGraphics graphics = new ConsoleGraphics();
+        public ChangeFile file = new ChangeFile();
         public List<string> Current = new List<string>();
         int previousSelectedIndex;
         public int selectedIndex;
         private bool wasPainted;
         private int scroll;
-        public bool Focuse { get; set; }
         private int x, y, height;
-
         public ListView(int x, int y, int height)
         {
             this.x = x;
@@ -61,6 +58,8 @@ namespace ConsoleApp5
                 Console.CursorLeft = x;
                 Console.CursorTop = i + y;
                 item.Render(columnWidth, i, x, y);
+
+                item.Location(Current, x, y);
                 Console.ForegroundColor = savedForeGround;
                 Console.BackgroundColor = savevBackground;
             }
@@ -106,12 +105,11 @@ namespace ConsoleApp5
             {
                 Cut(this, EventArgs.Empty);
             }
-            else if(key.Key == ConsoleKey.F3)
+            else if (key.Key == ConsoleKey.F3)
             {
                 Paste(this, EventArgs.Empty);
             }
         }
-
 
         public event EventHandler Selected;
         public event EventHandler Previous;

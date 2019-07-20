@@ -16,8 +16,8 @@ namespace ConsoleApp5
             Console.BufferHeight = Console.WindowHeight = 30;
             Console.BufferWidth = Console.WindowWidth = 120;
             FileSystem file = new FileSystem();
-            ChangeFile change = new ChangeFile(Console.BufferHeight, Console.BufferWidth);
-            change.Draw();
+            ChangeFile change = new ChangeFile();
+            change.Menu();
             file.Render();
         }
     }

@@ -10,14 +10,19 @@ namespace ConsoleApp5
 {
     class FileSystem
     {
-        private static string sourcePath = null;
+        static bool isFile = true;
+        static ChangeFile file = new ChangeFile();
+        private static string sourcePath = " ";
+        private static string destPath = " ";
+        private static string fileName = " ";
         public void Render()
         {
+
             Console.CursorVisible = false;
             ListView[] view = new ListView[2];
             for (int i = 0; i < view.Length; i++)
             {
-                view[i] = new ListView(3 + i * 60, 5, height: 20);
+                view[i] = new ListView(3 + i * 60, 2, height: 20);
                 view[i].columnWidth = new List<int> { 30, 10, 15 };
                 view[i].Items = GetItems("C:\\");
                 view[i].Selected += View_Selected;
@@ -31,11 +36,6 @@ namespace ConsoleApp5
             {
                 for (int i = 0; i < view.Length; i++)
                 {
-                    if (i == 0)
-                    {
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
                     view[0].Render();
                     view[1].Render();
                     bool changeDirectory = false;
@@ -55,20 +55,27 @@ namespace ConsoleApp5
 
         private static void View_Selected(object sender, EventArgs e)
         {
+            string denied = "Access denied";
             var view = (ListView)sender;
             var info = view.SelectedItem.state;
-            if (info is FileInfo file)
-            {
-                Process.Start(file.FullName);
-            }
-            else if (info is DirectoryInfo dir)
-            {
-                view.Clean();
-                view.Items = GetItems(dir.FullName);
-                view.Current.Add(dir.FullName);
 
+            try
+            {
+                if (info is FileInfo file)
+                {
+                    Process.Start(file.FullName);
+                }
+                else if (info is DirectoryInfo dir)
+                {
+                    view.Clean();
+                    view.Items = GetItems(dir.FullName);
+                    view.Current.Add(dir.FullName);
+                }
             }
-
+            catch (System.UnauthorizedAccessException)
+            {
+                file.Message(info, denied);
+            }
         }
 
         private static void View_Previous(object sender, EventArgs e)
@@ -81,25 +88,64 @@ namespace ConsoleApp5
                 view.Items = GetItems(Path.GetDirectoryName(view.Current[view.Current.Count - 1]));
                 lastElement = view.Current[view.Current.Count - 1];
             }
+
             view.Current.Remove(lastElement);
         }
 
         private static void View_Copy(object sender, EventArgs e)
         {
+            string copy = "Copy";
             var view = (ListView)sender;
             var info = view.SelectedItem.state;
-           // sourcePath = view.selectedItem.ToString();
+            fileName = view.SelectedItem.state.ToString();
+            file.Message(info, copy);
+            if (info is FileInfo files)
+            {
+                sourcePath = System.IO.Path.Combine(files.DirectoryName, fileName);
+                isFile = true;
+            }
+            else if (info is DirectoryInfo dir)
+            {
+                sourcePath = dir.FullName.ToString();
+                isFile = false;
+            }
 
         }
         private static void View_Cut(object sender, EventArgs e)
         {
-
+            var view = (ListView)sender;
         }
         private static void View_Paste(object sender, EventArgs e)
         {
+            string targetPath = " ";
             var view = (ListView)sender;
-            //string destPath = view.selectedItem.ToString();
-           // System.IO.File.Copy(sourcePath, destPath, true);
+            for (int i = 0; i < view.Current.Count; i++)
+            {
+                destPath = System.IO.Path.Combine(view.Current[view.Current.Count - 1], fileName);
+                targetPath = view.Current[view.Current.Count - 1];
+            }
+            string paste = $"Past in + {destPath} ";
+            if (isFile == true)
+            {
+                System.IO.File.Copy(sourcePath, destPath, true);
+                file.Message(fileName, paste);
+                view.Items = GetItems(targetPath);
+            }
+            else
+            {
+                if (System.IO.Directory.Exists(sourcePath))
+                {
+                    string[] files = System.IO.Directory.GetFiles(sourcePath);
+                    string dirName = fileName + " Pasted ";
+                    foreach (string s in files)
+                    {
+                        fileName = System.IO.Path.GetFileName(s);
+                        destPath = System.IO.Path.Combine(targetPath, fileName);
+                        System.IO.File.Copy(s, destPath, true);
+                    }
+                    file.Message(dirName, targetPath);
+                }
+            }
         }
 
 

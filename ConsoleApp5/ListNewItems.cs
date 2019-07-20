@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +12,8 @@ namespace ConsoleApp5
     {
         public readonly string[] columns;
         public object state { get; set; }
+        private string currentDirectory = "C:\\";
+
         public ListNewItems(object state, params string[] columns)
         {
             this.state = state;
@@ -21,14 +25,26 @@ namespace ConsoleApp5
             {
                 Console.CursorTop = elementIndex + ListviewY; ;
                 Console.CursorLeft = ListViewX + columnsWidth.Take(i).Sum();
-                Console.Write(GetStringWith(columns[i],columnsWidth[i]));
+                Console.Write(GetStringWith(columns[i], columnsWidth[i]));
             }
         }
-        internal void Clean(List<int> columnsWidht,int i, int x,int y)
+        internal void Clean(List<int> columnsWidht, int i, int x, int y)
         {
             Console.CursorTop = i + y;
             Console.CursorLeft = x;
             Console.Write(new string(' ', columnsWidht.Sum()));
+        }
+        public void Location(List<string> Current, int x, int y)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.BackgroundColor = ConsoleColor.Yellow;
+            Console.CursorTop = y - 2;
+            Console.CursorLeft = x;
+            for (int i = 0; i < Current.Count; i++)
+            {
+                currentDirectory = Current[Current.Count - 1];
+            }
+            Console.WriteLine(currentDirectory.PadRight(Console.WindowWidth / 2 - 5, ' '));
         }
 
         private string GetStringWith(string v1, int maxLenght)
@@ -36,14 +52,11 @@ namespace ConsoleApp5
             if (v1.Length < maxLenght)
             {
                 return v1.PadRight(maxLenght, ' ');
-                
             }
             else
             {
                 return v1.Substring(0, maxLenght - 5) + "[  ]";
             }
         }
-
-        
     }
 }
